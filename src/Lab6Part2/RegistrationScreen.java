@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class RegistrationScreen extends Frame implements ActionListener, WindowListener {
 
@@ -81,11 +83,36 @@ public class RegistrationScreen extends Frame implements ActionListener, WindowL
         add(label);
     }
 
+    private void writeDataInFile() {
+        String name = nameTextField.getText();
+        String surname = surnameTexField.getText();
+        String email = emailTextField.getText();
+        String gender = genderList.getSelectedItem();
+
+        try(FileWriter file = new FileWriter("file.txt", true)) {
+            file.write("name: " + name +
+                    " surname " + surname +
+                    " email " + email +
+                    " gender " + gender);
+            if (!(aboutYourselfTextArea.getText().trim().isEmpty())) {
+                String aboutYourself = aboutYourselfTextArea.getText();
+                file.write(" aboutYourself: " + aboutYourself + '\n');
+            } else {
+                file.append('\n');
+            }
+        } catch(IOException ex) {
+            System.out.println(ex);
+        }
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (!(nameTextField.getText().trim().isEmpty()) && !(surnameTexField.getText().trim().isEmpty()) &&
-                !(emailTextField.getText().trim().isEmpty()) && !(passwordTextField.getText().trim().isEmpty())) {
-            System.out.println("kek");
+                !(emailTextField.getText().trim().isEmpty()) && !(passwordTextField.getText().trim().isEmpty()) &&
+                 genderList.getSelectedItem() != null) {
+            writeDataInFile();
+            dispose();
         } else {
             MyDialog myDialog = new MyDialog(this, "Ошибка", true, "Данные заполнены некорректно");
             myDialog.setVisible(true);
@@ -99,7 +126,7 @@ public class RegistrationScreen extends Frame implements ActionListener, WindowL
 
     @Override
     public void windowClosing(WindowEvent windowEvent) {
-        this.dispose();
+        dispose();
     }
 
     @Override
